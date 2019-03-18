@@ -33,7 +33,7 @@ def plugins(f, page=1):
     embed.set_author(name="Plugins - Page " + str(page))
 
     for i in range(10 * page):
-        if page > 1 and i < 10 * page:
+        if page > 1 and i >= 10 * page:
             pass
         name = r["plugins"][i]["name"]
         credits = r["plugins"][i]["credits"]
