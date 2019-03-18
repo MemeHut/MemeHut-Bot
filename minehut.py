@@ -26,7 +26,7 @@ def reset(guild, user):
         except FileNotFoundError:
             print("h")
 
-def plugins(f, page):
+def plugins(f, page=1):
     r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/plugins", headers={"Authorization" : f["auth"]}).text)
 
     embed = discord.Embed(colour=discord.Colour(0x86aeec))
