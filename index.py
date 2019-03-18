@@ -28,6 +28,13 @@ async def on_message(message):
     elif message.content.startswith("!reset"):
         embed = minehut.reset(str(message.guild.id), str(message.author.id))
         await message.channel.send(embed=embed)
+    elif message.content.startswith("!restart"):
+        #Just for development
+        if message.author.id != 1:
+            await message.channel.send(embed=error.gen("You do not have permission to do this!"))
+            return
+        os.system("cd /opt/MemeHut/MemeHut-Bot/ && killall python3.6 && python3.6 index.py")
+        await message.channel.send()
     elif message.content.startswith("!plugin"):
         if args[0] == "msg":
             try:
