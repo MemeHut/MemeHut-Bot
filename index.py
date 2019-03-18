@@ -41,8 +41,8 @@ async def on_message(message):
                     embed = minehut.plugins(f, 1)
 
                     msg = await message.channel.send(embed=embed)
-                    await msg.add_reaction("<:arrow_left:>")
-                    await msg.add_reaction("<:arrow_right:>")
+                    await msg.add_reaction("\U000027a1")
+                    await msg.add_reaction("\U00002b05")
 
                     f["plugin-msg"] == [msg.channel, str(msg.id)]
 
