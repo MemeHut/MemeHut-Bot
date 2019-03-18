@@ -30,7 +30,7 @@ async def on_message(message):
         await message.channel.send(embed=embed)
     elif message.content.startswith("!restart"):
         #Just for development
-        if message.author.id != 1:
+        if message.author.id != 332312990441406465:
             await message.channel.send(embed=error.gen("You do not have permission to do this!"))
             return
         os.system("cd /opt/MemeHut/MemeHut-Bot/ && killall python3.6 && python3.6 index.py")
