@@ -32,7 +32,9 @@ def plugins(f, page):
     embed = discord.Embed(colour=discord.Colour(0x86aeec))
     embed.set_author(name="Plugins - Page " + str(page))
 
-    for i in range(10):
+    for i in range(10 * page):
+        if page > 1 and i < 10 * page:
+    pass
         name = r["plugins"][i]["name"]
         credits = r["plugins"][i]["credits"]
         if r["plugins"][i]["state"] == "ACTIVE":
