@@ -40,6 +40,8 @@ async def on_message(message):
 
                     if args[1] != None:
                         embed = minehut.plugins(f, int(args[1)
+                    else:
+                        embed = minehut.plugins(f, 1)
 
                     msg = await message.channel.send(embed=embed)
                     await msg.add_reaction("\U000027a1")
