@@ -29,7 +29,7 @@ async def on_message(message):
         embed = minehut.reset(str(message.guild.id), str(message.author.id))
         await message.channel.send(embed=embed)
     elif message.content.startswith("!plugin"):
-        if args[0] == "show":
+        if args[0] == "msg":
             try:
                 try:
                     f = json.loads(open("../Bot-Storage/" + str(message.guild.id) + ".json").read())
@@ -38,7 +38,8 @@ async def on_message(message):
                         msg = await client.get_message(f["plugin-msg"][0], f["plugin-msg"][1])
                         await client.delete_message(msg)
 
-                    embed = minehut.plugins(f, 1)
+                    if args[1] != None:
+                        embed = minehut.plugins(f, int(args[1)
 
                     msg = await message.channel.send(embed=embed)
                     await msg.add_reaction("\U000027a1")
