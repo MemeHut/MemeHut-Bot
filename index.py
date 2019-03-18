@@ -34,6 +34,7 @@ async def on_message(message):
                 try:
                     f = json.loads(open("../Bot-Storage/" + str(message.guild.id) + ".json").read())
                     if f["plugin-msg"] != []:
+                        print("hi")
                         msg = await client.get_message(f["plugin-msg"][0], f["plugin-msg"][1])
                         await client.delete_message(msg)
 
