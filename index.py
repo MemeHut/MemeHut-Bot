@@ -39,7 +39,7 @@ async def on_message(message):
                         await client.delete_message(msg)
 
                     if args[1] != None:
-                        embed = minehut.plugins(f, int(args[1])
+                        embed = minehut.plugins(f, int(args[1]))
                     else:
                         embed = minehut.plugins(f, 1)
 
