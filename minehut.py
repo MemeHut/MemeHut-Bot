@@ -2,24 +2,33 @@ import discord
 import json
 import requests
 import math
+import os
 
 import error
 import files
 
+def login(user, guild, email, psw):
+    r = requests.post("https://api.minehut.com/users/login", )
+
+    if r = {"error" : "Invalid email/password."}:
+        return error.gen("It appears as though you entered incorrect login information, please try again by running the following command in your server. \n\n !setup", "Invalid Login")
+
 def setup(guild):
-    try:
-        f = open("../Bot-Storage/" + guild + ".json").read()
+    f = files.read("../Bot-Storage/" + guild + ".json")
+
+    if f != "FileNotFoundError":
         return error.gen("This server has already been setup! In order to reset it, run the following command. \n\n!reset")
-    except FileNotFoundError:
-        embed = discord.Embed(colour=discord.Colour(0x86aeec))
-        embed.add_field(name="Message Sent!", value="I have sent you a DM with more information on how to setup the server!")
 
-        #DM Stuff
+    embed = discord.Embed(colour=discord.Colour(0x86aeec))
+    embed.add_field(name="Message Sent!", value="I have sent you a DM with more information on how to setup the server!")
 
-        return embed
+    embedd = discord.Embed(colour=discord.Colour(0x86aeec))
+    embedd.add_field(name="Link your Minehut account", value="NOTE: WE WILL NOT STORE ANY PASSWORDS OR EMAILS. In order to link your minehut account, we will ask for your email and password, if you are not comfortable with this, you can read our source code at the link below. https://github.com/MemeHut/MemeHut-Bot \n\nPlease reply to this message with your email, then a message containing your password.")
+
+    return [embed, embedd]
 
 def reset(guild, user):
-    f = json.loads(open("../Bot-Storage/" + guild + ".json").read())
+    f = files.read("../Bot-Storage/" + guild + ".json", True)
 
     if f == "FileNotFoundError":
         return error.gen("You have not setup your server yet!")
@@ -27,6 +36,7 @@ def reset(guild, user):
         return error.gen("Your server's file seems to be corrupted, please contact us. \n\n!contact")
 
     if user == f["owner"]:
+        os.remove("../Bot-Storage/" + guild + ".json")
         return setup(guild)
     else:
         return error.gen("You aren't the owner!", "Error")
@@ -71,7 +81,7 @@ async def plugins(client, message, page=1):
     if (len(r["plugins"]) / 10) >= page:
         await msg.add_reaction("\U000027a1")
 
-    f["plugin-msg"] == [msg.channel, str(msg.id)]
+    f["plugin-msg"] = [str(msg.channel), str(msg.id)]
 
     files.write("../Bot-Storage/" + str(message.guild.id) + ".json", json.dumps(f, indent=4, sort_keys=True))
 

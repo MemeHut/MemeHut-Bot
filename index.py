@@ -2,22 +2,33 @@ import requests
 import os
 import discord
 import json
-import procname
-
-procname.setprocname("MemeHut-Bot")
 
 import media
 import error
 import minehut
+import files
 
 config = files.read("../config.json", True)
 
 TOKEN = config["bot_token"]
+emailList = {}
+pswList = {}
+accEmails = {}
 
 client = discord.Client()
 
 @client.event
 async def on_message(message):
+
+    if str(message.channel).startswith("Direct Message with"):
+        if str(message.author.id) in emailList.keys():
+            pswList.update({str(message.author.id) : [emailList[str(message.author.id)], str(message.content)]})
+            emailList.pop(str(message.author.id))
+            print(str(pswList))
+            print(str(emailList))
+        elif str(message.author.id) in pswList.keys():
+            embed = minehut.login(str(message.author.id), pswList[str(message.author.id)][0], pswList[str(message.author.id)][1], str(message.content))
+            
 
     if message.author == client.user:
         return
@@ -26,8 +37,13 @@ async def on_message(message):
     args.pop(0)
 
     if message.content.startswith("!setup"):
-        embed = minehut.setup(str(message.guild.id))
-        await message.channel.send(embed=embed)
+        embeds = minehut.setup(str(message.guild.id))
+        await message.channel.send(embed=embeds[0])
+
+        await message.author.send(embed=embeds[1])
+
+        emailList.update({str(message.author.id) : str(message.guild.id)})
+
     elif message.content.startswith("!reset"):
         embed = minehut.reset(str(message.guild.id), str(message.author.id))
         await message.channel.send(embed=embed)
@@ -51,7 +67,7 @@ async def on_message(message):
         embed = discord.Embed(colour=discord.Colour(0xab99e8))
 
         #Help Stuff
-        
+
         await message.channel.send(embed=embed)
 
 @client.event
