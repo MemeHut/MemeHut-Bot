@@ -36,16 +36,13 @@ async def on_message(message):
         await message.channel.send("Restarting... ")
     elif message.content.startswith("!plugin"):
         if args[0] == "msg":
-            msg = await minehut.plugins(client, message, args)
+            if len(args) >= 2 and int(args[1]) > 0:
+                msg = await minehut.plugins(client, message, int(args[1]))
+            else:
+                msg = await minehut.plugins(client, message)
 
             if msg == "error":
                 return
-
-            res = client.wait_for_reaction(["\U00002b05", "\U000027a1"], message=msg)
-            if res.reaction.emoji == "\U00002b05":
-                print("hoi")
-            else:
-                print("no")
 
     elif message.content.startswith("!help"):
         embed = discord.Embed(colour=discord.Colour(0xab99e8))

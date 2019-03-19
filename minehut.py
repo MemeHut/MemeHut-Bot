@@ -1,6 +1,7 @@
 import discord
 import json
 import requests
+import math
 
 import error
 import files
@@ -30,11 +31,7 @@ def reset(guild, user):
     else:
         return error.gen("You aren't the owner!", "Error")
 
-def plugins(client, message, page=1):
-    if len(args) >= 2 and type(int(args[1])) is not int:
-        await message.channel.send(embed=error.gen("The page number must be an integer greater than 1!"))
-        return "error"
-
+async def plugins(client, message, page=1):
     f = files.read("../Bot-Storage/" + str(message.guild.id) + ".json", True)
 
     if f == "FileNotFoundError":
@@ -51,18 +48,28 @@ def plugins(client, message, page=1):
     r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/plugins", headers={"Authorization" : f["auth"]}).text)
 
     embed = discord.Embed(colour=discord.Colour(0x86aeec))
-    embed.set_author(name="Plugins - Page " + str(page) + )
+    embed.set_author(name="Plugins - Page " + str(page) + "/" + str(math.ceil(len(r["plugins"]) / 10)))
 
     for i in range(10 * page):
-
+        if page > 1 and i <= (10 * page) - 10:
+            pass
+        else:
+            name = r["plugins"][i]["name"]
+            credits = r["plugins"][i]["credits"]
+            if r["plugins"][i]["state"] == "ACTIVE":
+                embed.add_field(name=":white_check_mark: " + name, value="Credits: " + str(credits), inline=False)
+            elif r["plugins"][i]["state"] == "PURCHASED":
+                embed.add_field(name=":x: " + name, value="Credits: " + str(credits), inline=False)
+            elif r["plugins"][i]["state"] == "LOCKED":
+                embed.add_field(name=":lock: " + name, value="Credits: " + str(credits), inline=False)
 
     msg = await message.channel.send(embed=embed)
 
-    if len(args) >= 2:
-        if int(args[1]) >= 2:
-            await msg.add_reaction("\U00002b05")
+    if page >= 2:
+        await msg.add_reaction("\U00002b05")
 
-    await msg.add_reaction("\U000027a1")
+    if (len(r["plugins"]) / 10) >= page:
+        await msg.add_reaction("\U000027a1")
 
     f["plugin-msg"] == [msg.channel, str(msg.id)]
 
