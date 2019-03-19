@@ -19,7 +19,7 @@ def write(path, content):
     try:
         f = open(path, "w")
         f.write(content)
-        print("written")
+        print(content)
         f.close()
     except FileNotFoundError:
         return "FileNotFoundError"
