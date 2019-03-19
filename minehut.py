@@ -73,6 +73,8 @@ async def plugins(client, message, page=1):
 
     f["plugin-msg"] == [msg.channel, str(msg.id)]
 
+    
+
     files.write("../Bot-Storage/" + str(message.guild.id) + ".json", json.dumps(f, indent=4, sort_keys=True))
 
     return msg

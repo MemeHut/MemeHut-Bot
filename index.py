@@ -32,7 +32,7 @@ async def on_message(message):
         if message.author.id != 332312990441406465:
             await message.channel.send(embed=error.gen("You do not have permission to do this!"))
             return
-        os.system("cd /opt/MemeHut/MemeHut-Bot/ && killall python3 && python3 index.py")
+        os.system("cd /opt/MemeHut/MemeHut-Bot/ && killall python3.6 && python3.6 index.py")
         await message.channel.send("Restarting... ")
     elif message.content.startswith("!plugin"):
         if args[0] == "msg":
