@@ -2,6 +2,9 @@ import requests
 import os
 import discord
 import json
+import procname
+
+procname.setprocname("MemeHut-Bot")
 
 import media
 import error
@@ -32,7 +35,7 @@ async def on_message(message):
         if message.author.id != 332312990441406465:
             await message.channel.send(embed=error.gen("You do not have permission to do this!"))
             return
-        os.system("cd /opt/MemeHut/MemeHut-Bot/ && killall python3.6 && python3.6 index.py")
+        os.system("cd /opt/MemeHut/MemeHut-Bot/ && killall MemeHut-Bot && python3.6 index.py")
         await message.channel.send("Restarting... ")
     elif message.content.startswith("!plugin"):
         if args[0] == "msg":
