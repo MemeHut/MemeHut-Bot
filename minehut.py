@@ -23,7 +23,7 @@ def setup(guild):
     embed.add_field(name="Message Sent!", value="I have sent you a DM with more information on how to setup the server!")
 
     embedd = discord.Embed(colour=discord.Colour(0x86aeec))
-    embedd.add_field(name="Link your Minehut account", value="NOTE: WE WILL NOT STORE ANY PASSWORDS OR EMAILS. In order to link your minehut account, we will ask for your email and password, if you are not comfortable with this, you can read our source code at the link below. https://github.com/MemeHut/MemeHut-Bot \n\nPlease reply to this message with your email, then a message containing your password.")
+    embedd.add_field(name="Link your Minehut account", value="In order to link your minehut account, we will ask for your email and password, if you are not comfortable with this, you can read our source code at the link below. https://github.com/MemeHut/MemeHut-Bot \n NOTE: WE WILL NOT STORE ANY PASSWORDS OR EMAILS. \n\nPlease reply to this message with your email, then a message containing your password.")
 
     return [embed, embedd]
 
