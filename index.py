@@ -7,7 +7,7 @@ import media
 import error
 import minehut
 
-config = json.loads(open("../config.json").read())
+config = files.read("../config.json", True)
 
 TOKEN = config["bot_token"]
 
@@ -47,12 +47,8 @@ async def on_message(message):
     elif message.content.startswith("!help"):
         embed = discord.Embed(colour=discord.Colour(0xab99e8))
 
-        embed.add_field(name="View Fortnite Stats", value="!stats (username) (platform - XBOX, PC, PS)", inline=False)
-        embed.add_field(name="View Fortnite Match History", value="!matches (username) (platform - XBOX, PC, PS)", inline=False)
-        embed.add_field(name="View Current Fortnite Item Shop", value="!store", inline=False)
-        embed.add_field(name="Search Giphy For a Gif", value="!gif (search)\ne.g - !gif cats", inline=False)
-        embed.add_field(name="Generate Insults", value="!insult (amount)", inline=False)
-
+        #Help Stuff
+        
         await message.channel.send(embed=embed)
 
 @client.event
