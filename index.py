@@ -36,10 +36,10 @@ async def on_message(message):
     args.pop(0)
 
     if message.content.startswith("!setup"):
-        embeds = minehut.setup(str(message.guild.id))
-        await message.channel.send(embed=embeds[0])
+        embed, embedd = minehut.setup(str(message.guild.id))
+        await message.channel.send(embed=embed)
 
-        await message.author.send(embed=embeds[1])
+        await message.author.send(embed=embedd)
 
         emailList.update({str(message.author.id) : str(message.guild.id)})
 
