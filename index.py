@@ -24,8 +24,7 @@ async def on_message(message):
         if str(message.author.id) in emailList.keys():
             pswList.update({str(message.author.id) : [emailList[str(message.author.id)], str(message.content)]})
             emailList.pop(str(message.author.id))
-            print(str(pswList))
-            print(str(emailList))
+            
         elif str(message.author.id) in pswList.keys():
             embed = minehut.login(str(message.author.id), pswList[str(message.author.id)][0], pswList[str(message.author.id)][1], str(message.content))
             
