@@ -24,12 +24,14 @@ async def on_message(message):
         if str(message.author.id) in emailList.keys():
             pswList.update({str(message.author.id) : [emailList[str(message.author.id)], str(message.content)]})
             emailList.pop(str(message.author.id))
-            
+
         elif str(message.author.id) in pswList.keys():
             embed = minehut.login(str(message.author.id), pswList[str(message.author.id)][0], pswList[str(message.author.id)][1], str(message.content))
 
             await message.channel.send(embed=embed)
-            
+
+            pswList.pop(str(message.author.id))
+
 
     if message.author == client.user:
         return
@@ -38,15 +40,13 @@ async def on_message(message):
     args.pop(0)
 
     if message.content.startswith("!setup"):
-        embed, embedd = minehut.setup(str(message.guild.id))
+        embed = await minehut.setup(message, str(message.guild.id))
         await message.channel.send(embed=embed)
-
-        await message.author.send(embed=embedd)
 
         emailList.update({str(message.author.id) : str(message.guild.id)})
 
     elif message.content.startswith("!reset"):
-        embed = minehut.reset(str(message.guild.id), str(message.author.id))
+        embed = await minehut.reset(str(message.guild.id), str(message.author.id))
         await message.channel.send(embed=embed)
     elif message.content.startswith("!restart"):
         if message.author.id != 332312990441406465:

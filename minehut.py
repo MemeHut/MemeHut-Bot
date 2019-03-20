@@ -10,10 +10,12 @@ import files
 def login(user, guild, email, psw):
     r = json.loads(requests.post("https://api.minehut.com/users/login", headers={"Content-Type":"application/json"}, data=json.dumps({"username":email,"password":psw})).text)
 
-    if r == {"error" : "Invalid email/password."}:
+    print(r)
+
+    if "error" in r.keys():
         return error.gen("It appears as though you entered incorrect login information, please try again by running the following command in your server. \n\n !setup", "Invalid Login")
 
-def setup(guild):
+async def setup(message, guild):
     f = files.read("../Bot-Storage/" + guild + ".json")
 
     if f != "FileNotFoundError":
@@ -25,9 +27,11 @@ def setup(guild):
     embedd = discord.Embed(colour=discord.Colour(0x86aeec))
     embedd.add_field(name="Link your Minehut account", value="In order to link your minehut account, we will ask for your email and password, if you are not comfortable with this, you can read our source code at the link below.\nNOTE: WE WILL NOT STORE ANY PASSWORDS OR EMAILS. \nhttps://github.com/MemeHut/MemeHut-Bot \n\nPlease reply to this message with your email, then a message containing your password.")
 
-    return [embed, embedd]
+    await message.author.send(embed=embedd)
 
-def reset(guild, user):
+    return embed
+
+async def reset(guild, user):
     f = files.read("../Bot-Storage/" + guild + ".json", True)
 
     if f == "FileNotFoundError":
@@ -37,7 +41,7 @@ def reset(guild, user):
 
     if user == f["owner"]:
         os.remove("../Bot-Storage/" + guild + ".json")
-        return setup(guild)
+        return await setup(guild)
     else:
         return error.gen("You aren't the owner!", "Error")
 
