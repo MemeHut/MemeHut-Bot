@@ -8,7 +8,7 @@ import error
 import files
 
 def login(user, guild, email, psw):
-    r = requests.post("https://api.minehut.com/users/login", headers={"Content-Type":"application/json"}, data=json.dumps({"username":email,"password":psw}))
+    r = json.loads(requests.post("https://api.minehut.com/users/login", headers={"Content-Type":"application/json"}, data=json.dumps({"username":email,"password":psw})).text)
 
     if r == {"error" : "Invalid email/password."}:
         return error.gen("It appears as though you entered incorrect login information, please try again by running the following command in your server. \n\n !setup", "Invalid Login")
