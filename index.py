@@ -27,6 +27,8 @@ async def on_message(message):
             
         elif str(message.author.id) in pswList.keys():
             embed = minehut.login(str(message.author.id), pswList[str(message.author.id)][0], pswList[str(message.author.id)][1], str(message.content))
+
+            await message.channel.send(embed=embed)
             
 
     if message.author == client.user:
