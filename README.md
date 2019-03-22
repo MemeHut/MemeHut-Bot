@@ -10,7 +10,7 @@ After adding the bot to your server, run the command !help and you will get a fu
 ## Login Policy
 In order to add your Minehut server to our bot, we must ask you for your Minehut login credentials. Don't worry, we dont stors your email and password. You can view the source code for the bot on this site. I am going to walk you through the entire login process so that you don't have to worry. 
 
-1. You run the !setup. ommand in your server and we add your user ID to an array of users setting up their accounts.
+1. You run the !setup command in your server and we add your user ID to an array of users setting up their accounts.
 2. We send you a direct message and wait for your response with your email and password. 
 3. When you enter your email, we store it in another array with your user ID, we then wait for your password reply.
 4. As soon as we recieve this information it is sent to Minehut's API in an HTTP POST request, so that we can fetch data about your servers.
