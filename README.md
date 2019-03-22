@@ -5,7 +5,7 @@ A discord bot for Minehut developers to control their servers.
 To add the bot to your server go to our official site and follow the instructions there.
 https://memehut.github.io/bot/authorization
 
-After adding the bot to your server, run the command !help and you will bet a full list of commands. And your done! It's as simple as that.
+After adding the bot to your server, run the command !help and you will get a full list of commands. And your done! It's as simple as that.
 
 ## Login Policy
 In order to add your Minehut server to our bot, we must ask you for your Minehut login credentials. Don't worry, we dont stors your email and password. You can view the source code for the bot on this site. I am going to walk you through the entire login process so that you don't have to worry. 
@@ -17,4 +17,4 @@ In order to add your Minehut server to our bot, we must ask you for your Minehut
 5. We then remove your email from the previous array, your password was never stored. We store your authorization token for Minehut as well as some other data that will be used to communicate with your server.
 6. Thats it! None of your personal information is ever permanently stored on our servers.
 
-Remember you can view the code for this right here on this site.
+Remember you can view the code for this process right here on GitHub.
