@@ -8,12 +8,29 @@ import error
 import files
 
 def login(user, guild, email, psw):
-    r = json.loads(requests.post("https://api.minehut.com/users/login", headers={"Content-Type":"application/json"}, data=json.dumps({"username":email,"password":psw})).text)
+    print(email)
+    print(psw)
+    r = json.loads(requests.post("https://api.minehut.com/users/login", headers={"Content-Type":"application/json"}, data=json.dumps({"email":email,"password":psw})).text)
 
     print(r)
 
     if "error" in r.keys():
-        return error.gen("It appears as though you entered incorrect login information, please try again by running the following command in your server. \n\n !setup", "Invalid Login")
+        return error.gen("It appears as though you entered incorrect login information, please try again.", "Invalid Login")
+
+    data = files.read("../Bot-Storage/template.json", True)
+
+    data["auth"] == r["token"]
+    data["servers"][0] = r["servers"][0]
+    data["servers"][1] = r["servers"][1]
+    data["owner"] = user
+    data["server"] = 2
+
+    f = files.write("../Bot-Storage/" + guild + ".json", json.dumps(data, indent=4, sort_keys=True))
+
+    embed = discord.Embed(colour=discord.Colour(0x86aeec))
+    embed.add_field(name="Server Setup!", value="Your server has been setup! For a list of commands run the following command. \n\n!help")
+
+    return embed
 
 async def setup(message, guild):
     f = files.read("../Bot-Storage/" + guild + ".json")
@@ -41,7 +58,11 @@ async def reset(guild, user):
 
     if user == f["owner"]:
         os.remove("../Bot-Storage/" + guild + ".json")
-        return await setup(guild)
+
+        embed = discord.Embed(colour=discord.Colour(0x86aeec))
+        embed.add_field(name="Server Reset!", value="Your server has been reset.")
+
+        return embed
     else:
         return error.gen("You aren't the owner!", "Error")
 

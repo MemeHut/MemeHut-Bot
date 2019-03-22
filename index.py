@@ -20,6 +20,9 @@ client = discord.Client()
 @client.event
 async def on_message(message):
 
+    if message.author == client.user:
+        return
+
     if str(message.channel).startswith("Direct Message with"):
         if str(message.author.id) in emailList.keys():
             pswList.update({str(message.author.id) : [emailList[str(message.author.id)], str(message.content)]})
@@ -31,10 +34,6 @@ async def on_message(message):
             await message.channel.send(embed=embed)
 
             pswList.pop(str(message.author.id))
-
-
-    if message.author == client.user:
-        return
 
     args = message.content.split(" ")
     args.pop(0)

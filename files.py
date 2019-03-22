@@ -17,7 +17,7 @@ def read(path, isJSON=False):
 
 def write(path, content):
     try:
-        f = open(path, "w")
+        f = open(path, "w+")
         f.write(content)
         print(content)
         f.close()
