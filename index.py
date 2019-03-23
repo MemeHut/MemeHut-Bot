@@ -58,7 +58,7 @@ async def on_message(message):
             await message.channel.send(embed=embed)
 
         elif message.content.startswith("!setup"):
-            return await message.channel.send(embed=setup.setup(message, str(message.guild.id)))
+            return await message.channel.send(embed=await setup.setup(message, str(message.guild.id)))
             emailList.update({str(message.author.id) : str(message.guild.id)})
 
     elif message.content.split(" ")[0] in ownerOnly and message.content.split(" ")[0] in serverSelectedOnly:
