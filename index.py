@@ -63,7 +63,7 @@ async def on_message(message):
 
         if message.content.startswith("!setup"):
             embed = await setup.setup(message, str(message.guild.id))
-            await message.channel.send(embed=embed)
+            return await message.channel.send(embed=embed)
 
             emailList.update({str(message.author.id) : str(message.guild.id)})
 
@@ -75,7 +75,7 @@ async def on_message(message):
             if str(message.author.id) != f["owner"]:
                  return await message.channel.send(embed=error.gen("You aren't the owner!"))
 
-        elif message.content.startswith("!server"):
+        if message.content.startswith("!server"):
             print(args)
             if args[0] == None:
                 return await message.channel.send(embed=error.gen("Please specify an index. \n\n!server (index - 0 or 1)"))
@@ -83,6 +83,8 @@ async def on_message(message):
             embed = setup.selectServer(str(message.guild.id), int(args[0]))
 
             await message.channel.send(embed=embed)
+
+        #Can't run without server selected
 
         if f != "FileNotFoundError":
             if f["server"] == 2:
