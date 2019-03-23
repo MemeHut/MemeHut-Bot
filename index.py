@@ -20,90 +20,78 @@ emailList = {}
 pswList = {}
 accEmails = {}
 
-serverNotSelected = ["!plugins", "!setup", "!reset"]
+serverSelectedOnly = ["!plugins"]
+ownerOnly = ["!plugins", "!reset", "!server"]
+
 
 client = discord.Client()
 
 @client.event
 async def on_message(message):
+    args = message.content.split(" ")
+    args.pop(0)
+    f = files.read("../Bot-Storage/" + str(message.guild.id) + ".json", True)
 
     if message.author == client.user:
         return
 
     if str(message.channel).startswith("Direct Message with"):
         if str(message.author.id) in emailList.keys():
-            pswList.update({str(message.author.id) : [emailList[str(message.author.id)], str(message.content)]})
+            pswList.update({str(message.author.id) : [emailList[str(message.author.id)], message.content]})
             emailList.pop(str(message.author.id))
-
         elif str(message.author.id) in pswList.keys():
-            embed = setup.login(str(message.author.id), pswList[str(message.author.id)][0], pswList[str(message.author.id)][1], str(message.content))
-
+            embed = setup.login(str(message.author.id), pswList[str(message.author.id)][0], pswList[str(message.author.id)][1], message.content)
             await message.channel.send(embed=embed)
-
             pswList.pop(str(message.author.id))
 
-    args = message.content.split(" ")
-    args.pop(0)
+    if not message.content.split(" ")[0] in serverSelectedOnly and not message.content.split(" ")[0] in ownerOnly:
+        if message.content.startswith("!restart"):
+            if message.author.id != 332312990441406465:
+                await message.channel.send(embed=error.gen("You do not have permission to do this!"))
+                return
+            os.system("cd /opt/MemeHut/MemeHut-Bot/ && killall python3.6 && python3.6 index.py")
+            await message.channel.send("Restarting...")
 
-    if message.content.startswith("!restart"):
-        if message.author.id != 332312990441406465:
-            await message.channel.send(embed=error.gen("You do not have permission to do this!"))
-            return
-        os.system("cd /opt/MemeHut/MemeHut-Bot/ && killall python3.6 && python3.6 index.py")
-        await message.channel.send("Restarting...")
+        elif message.content.startswith("!help"):
+            embed = discord.Embed(colour=discord.Colour(0xab99e8))
+            #Help Stuff
+            await message.channel.send(embed=embed)
 
-    elif message.content.startswith("!help"):
-        embed = discord.Embed(colour=discord.Colour(0xab99e8))
-
-        #Help Stuff
-
-        await message.channel.send(embed=embed)
-
-    elif message.content.split(" ")[0] in serverNotSelected:
-
-        if message.content.startswith("!setup"):
-            embed = await setup.setup(message, str(message.guild.id))
-            return await message.channel.send(embed=embed)
-
+        elif message.content.startswith("!setup"):
+            return await message.channel.send(embed=setup.setup(message, str(message.guild.id)))
             emailList.update({str(message.author.id) : str(message.guild.id)})
 
-        # Here starts ownership required commands
-
-        f = files.read("../Bot-Storage/" + str(message.guild.id) + ".json", True)
-
+    elif message.content.split(" ")[0] in ownerOnly and message.content.split(" ")[0] in serverSelectedOnly:
         if f != "FileNotFoundError":
             if str(message.author.id) != f["owner"]:
-                 return await message.channel.send(embed=error.gen("You aren't the owner!"))
-
-        if message.content.startswith("!server"):
-            print(args)
-            if args[0] == None:
-                return await message.channel.send(embed=error.gen("Please specify an index. \n\n!server (index - 0 or 1)"))
-
-            embed = setup.selectServer(str(message.guild.id), int(args[0]))
-
-            await message.channel.send(embed=embed)
-
-        #Can't run without server selected
-
+                return await message.channel.send(embed=error.gen("You aren't the owner!"))
         if f != "FileNotFoundError":
             if f["server"] == 2:
-                embed = setup.serverNotSelected(str(message.guild.id))
-                return await message.channel.send(embed=embed)
+                return await message.channel.send(embed=setup.serverNotSelected(str(message.guild.id)))
 
-        if message.content.startswith("!reset"):
-            embed = await setup.reset(str(message.guild.id), str(message.author.id))
-            await message.channel.send(embed=embed)
-
-        elif message.content.startswith("!plugins"):
+        if message.content.startswith("!plugins"):
             if args[0] == "view":
                 if len(args) >= 2 and int(args[1]) > 0:
                     msg = await plugins.view(client, message, int(args[1]))
                 else:
                     msg = await plugins.view(client, message)
 
-                if msg == "error":
-                    return
+    elif message.content.split(" ")[0] in ownerOnly:
+        if f != "FileNotFoundError":
+            if f["server"] == 2:
+                return await message.channel.send(embed=setup.serverNotSelected(str(message.guild.id)))
+
+        if message.content.startswith("!reset"):
+            await message.channel.send(embed=setup.reset(str(message.guild.id), str(message.author.id)))
+
+        elif message.content.startswith("!server"):
+            if args[0] == None:
+                return await message.channel.send(embed=error.gen("Please specify an index. \n\n!server (index - 0 or 1)"))
+
+            await message.channel.send(embed=setup.selectServer(str(message.guild.id), int(args[0])))
+
+    #elif message.content.split(" ")[0] in serverSelectedOnly:
+
 
 
 @client.event

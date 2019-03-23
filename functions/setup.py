@@ -39,7 +39,7 @@ async def setup(message, guild):
 
     return embed
 
-async def reset(guild, user):
+def reset(guild, user):
     f = files.read("../Bot-Storage/" + guild + ".json", True)
 
     if f == "FileNotFoundError":
