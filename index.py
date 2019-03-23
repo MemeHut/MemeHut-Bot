@@ -23,17 +23,17 @@ accEmails = {}
 serverSelectedOnly = ["!plugins"]
 ownerOnly = ["!plugins", "!reset", "!server"]
 
-
 client = discord.Client()
 
 @client.event
 async def on_message(message):
     args = message.content.split(" ")
     args.pop(0)
-    f = files.read("../Bot-Storage/" + str(message.guild.id) + ".json", True)
 
     if message.author == client.user:
         return
+
+    f = files.read("../Bot-Storage/" + str(message.guild.id) + ".json", True)
 
     if str(message.channel).startswith("Direct Message with"):
         if str(message.author.id) in emailList.keys():
