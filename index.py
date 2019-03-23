@@ -33,8 +33,6 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    f = files.read("../Bot-Storage/" + str(message.guild.id) + ".json", True)
-
     if str(message.channel).startswith("Direct Message with"):
         if str(message.author.id) in emailList.keys():
             pswList.update({str(message.author.id) : [emailList[str(message.author.id)], message.content]})
@@ -43,6 +41,8 @@ async def on_message(message):
             embed = setup.login(str(message.author.id), pswList[str(message.author.id)][0], pswList[str(message.author.id)][1], message.content)
             await message.channel.send(embed=embed)
             pswList.pop(str(message.author.id))
+
+    f = files.read("../Bot-Storage/" + str(message.guild.id) + ".json", True)
 
     if not message.content.split(" ")[0] in serverSelectedOnly and not message.content.split(" ")[0] in ownerOnly:
         if message.content.startswith("!restart"):
