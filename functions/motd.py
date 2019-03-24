@@ -23,23 +23,23 @@ def view(guild, server=True):
     motd = motd.replace("&3", "<<3>>")
     motd = motd.replace("&4", "<<4>>")
     motd = motd.replace("&5", "<<5>>")
-motd = motd.replace("&6", "<<6>>")
-motd = motd.replace("&7", "<<7>>")
-motd = motd.replace("&8", "<<8>>")
-motd = motd.replace("&9", "<<9>>")
-motd = motd.replace("&a", "<<a>>")
-motd = motd.replace("&b", "<<b>>")
-motd = motd.replace("&c", "<<c>>")
-motd = motd.replace("&d", "<<d>>")
-motd = motd.replace("&e", "<<e>>")
-motd = motd.replace("&f", "<<f>>")
+    motd = motd.replace("&6", "<<6>>")
+    motd = motd.replace("&7", "<<7>>")
+    motd = motd.replace("&8", "<<8>>")
+    motd = motd.replace("&9", "<<9>>")
+    motd = motd.replace("&a", "<<a>>")
+    motd = motd.replace("&b", "<<b>>")
+    motd = motd.replace("&c", "<<c>>")
+    motd = motd.replace("&d", "<<d>>")
+    motd = motd.replace("&e", "<<e>>")
+    motd = motd.replace("&f", "<<f>>")
 
-r = requests.get("https://render-tron.appspot.com/screenshot/http://rpiweb.000webhostapp.com/motd.php%3Fname%3D" + server_name + "%26motd%3D" + motd, stream=True)
-if r.status_code == 200:
-    with open("motd.png", 'wb') as file:
-        for chunk in r:
-            file.write(chunk)
-    img = cv2.imread("motd.png")
-    img = img[10:130, 10:1000]
-    cv2.imwrite("motd.png", img)
-```
+    r = requests.get("https://render-tron.appspot.com/screenshot/http://rpiweb.000webhostapp.com/motd.php%3Fname%3D" + name + "%26motd%3D" + motd, stream=True)
+    if r.status_code == 200:
+        with open("motd.png", 'wb') as file:
+            for chunk in r:
+                file.write(chunk)
+        img = cv2.imread("motd.png")
+        img = img[10:130, 10:1000]
+        cv2.imwrite("motd.png", img)
+    
