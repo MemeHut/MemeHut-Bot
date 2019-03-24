@@ -121,7 +121,7 @@ async def on_message(message):
                 return await message.channel.send(embed=setup.serverNotSelected(str(message.guild.id)))
         if message.content.startswith("!motd"):
             if args == None:
-                await message.channel.send(embed=motd.view(str(message.guild.id))
+                await message.channel.send(file=motd.view(str(message.guild.id))
 
 
 @client.event
