@@ -7,6 +7,7 @@ import sys
 sys.path.insert(0, './functions/')
 
 import plugins
+import motd
 import setup
 
 import error
