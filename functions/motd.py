@@ -33,6 +33,8 @@ def view(guild, server=True):
     motd = motd.replace("&d", "<<d>>")
     motd = motd.replace("&e", "<<e>>")
     motd = motd.replace("&f", "<<f>>")
+    
+    motd = motd.replace(" ", "%20")
 
     r = requests.get("https://render-tron.appspot.com/screenshot/http://rpiweb.000webhostapp.com/motd.php%3Fname%3D" + name + "%26motd%3D" + motd, stream=True)
     if r.status_code == 200:
