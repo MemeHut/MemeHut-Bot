@@ -12,6 +12,7 @@ def login(user, guild, email, psw):
     data = files.read("../Bot-Storage/template.json", True)
 
     data["auth"] = r["token"]
+    data["id"] = r["_id"]
     data["servers"][0] = r["servers"][0]
     data["servers"][1] = r["servers"][1]
     data["owner"] = user

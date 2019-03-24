@@ -6,15 +6,13 @@ import math
 import error
 import files
 
-async def view(client, message, page=1):
+async def view(message, page=1):
     f = files.read("../Bot-Storage/" + str(message.guild.id) + ".json", True)
 
     if f == "FileNotFoundError":
-        await message.channel.send(embed=error.gen("You have not setup your server yet!"))
-        return "error"
+        return error.gen("You have not setup your server yet!")
     elif f == "JSONDecodeError":
-        await message.channel.send(embed=error.gen("Your server's file seems to be corrupted, please contact us or reset your server. \n\n!contact \n!reset"))
-        return "error"
+        return error.gen("Your server's file seems to be corrupted, please contact us or reset your server. \n\n!contact \n!reset")
 
     if f["plugin-msg"] != "":
         msg = await message.channel.fetch_message(f["plugin-msg"])
@@ -52,15 +50,13 @@ async def view(client, message, page=1):
 
     return msg
 
-async def install(message, guild, id):
-    f = files.read("../Bot-Storage/" + str(message.guild.id) + ".json", True)
+def install(guild, id):
+    f = files.read("../Bot-Storage/" + guild + ".json", True)
 
     if f == "FileNotFoundError":
-        await message.channel.send(embed=error.gen("You have not setup your server yet!"))
-        return "error"
+        return error.gen("You have not setup your server yet!")
     elif f == "JSONDecodeError":
-        await message.channel.send(embed=error.gen("Your server's file seems to be corrupted, please contact us or reset your server. \n\n!contact \n!reset"))
-        return "error"
+        return error.gen("Your server's file seems to be corrupted, please contact us or reset your server. \n\n!contact \n!reset")
 
     r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/plugins", headers={"Authorization" : f["auth"]}).text)
 
@@ -82,15 +78,13 @@ async def install(message, guild, id):
 
     return embed
 
-async def remove(message, guild, id):
-    f = files.read("../Bot-Storage/" + str(message.guild.id) + ".json", True)
+def remove(guild, id):
+    f = files.read("../Bot-Storage/" + guild + ".json", True)
 
     if f == "FileNotFoundError":
-        await message.channel.send(embed=error.gen("You have not setup your server yet!"))
-        return "error"
+        return error.gen("You have not setup your server yet!")
     elif f == "JSONDecodeError":
-        await message.channel.send(embed=error.gen("Your server's file seems to be corrupted, please contact us or reset your server. \n\n!contact \n!reset"))
-        return "error"
+        return error.gen("Your server's file seems to be corrupted, please contact us or reset your server. \n\n!contact \n!reset")
 
     r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/plugins", headers={"Authorization" : f["auth"]}).text)
 
@@ -103,24 +97,22 @@ async def remove(message, guild, id):
     if r["plugins"][id]["state"] == "PURCHASED" or r["plugins"][id]["state"] == "LOCKED":
         return error.gen("The plugin " + pluginName + " is not installed on this server! If you would like to install it, run the following command.\n\n!plugins install " + str(id))
 
-    requests.post("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/remove_plugin", headers={"Authorization" : f["auth"]}, data=json.dumps({"plugin" : pluginID}))
+    requests.post("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/remove_plugin", headers={"Authorization" : f["auth"], "Content-Type" : "application/json"}, data=json.dumps({"plugin" : pluginID}))
 
     embed = discord.Embed(colour=discord.Colour(0x86aeec))
     embed.add_field(name="Plugin removed!", value="Succesfully removed the plugin " + pluginName, inline=False)
 
     return embed
 
-async def purchase(message, guild, id):
-    f = files.read("../Bot-Storage/" + str(message.guild.id) + ".json", True)
+def purchase(guild, id):
+    f = files.read("../Bot-Storage/" + guild + ".json", True)
 
     if f == "FileNotFoundError":
-        await message.channel.send(embed=error.gen("You have not setup your server yet!"))
-        return "error"
+        return error.gen("You have not setup your server yet!")
     elif f == "JSONDecodeError":
-        await message.channel.send(embed=error.gen("Your server's file seems to be corrupted, please contact us or reset your server. \n\n!contact \n!reset"))
-        return "error"
+        return error.gen("Your server's file seems to be corrupted, please contact us or reset your server. \n\n!contact \n!reset")
 
-    r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/plugins", headers={"Authorization" : f["auth"]}).text)
+    r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/plugins", headers={"Authorization" : f["auth"], "Content-Type" : "application/json"}).text)
 
     if id > len(r["plugins"]) - 1:
         return error.gen("The plugin ID you entered is too high, there aren't that many plugins!")
@@ -131,8 +123,8 @@ async def purchase(message, guild, id):
     if r["plugins"][id]["state"] == "ACTIVE" or r["plugins"][id]["state"] == "PURCHASED":
         return error.gen("You already own the plugin " + pluginName)
 
-    requests.post("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/purchase_plugin", headers={"Authorization" : f["auth"]}, data=json.dumps({"plugin" : pluginID}))
-    requests.post("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/install_plugin", headers={"Authorization" : f["auth"]}, data=json.dumps({"plugin" : pluginID}))
+    requests.post("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/purchase_plugin", headers={"Authorization" : f["auth"], "Content-Type" : "application/json"}, data=json.dumps({"plugin" : pluginID}))
+    requests.post("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/install_plugin", headers={"Authorization" : f["auth"], "Content-Type" : "application/json"}, data=json.dumps({"plugin" : pluginID}))
 
     embed = discord.Embed(colour=discord.Colour(0x86aeec))
     embed.add_field(name="Plugin purchased and installed!", value="Succesfully purchased and installed the plugin " + pluginName, inline=False)
