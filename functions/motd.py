@@ -44,4 +44,5 @@ def view(guild, server=True):
         img = cv2.imread("motd.png")
         img = img[10:130, 10:1000]
         cv2.imwrite("motd.png", img)
+    return discord.File(name + "motd.png", "motd.png")
     
