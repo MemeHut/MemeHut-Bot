@@ -37,10 +37,12 @@ async def on_message(message):
         if str(message.author.id) in emailList.keys():
             pswList.update({str(message.author.id) : [emailList[str(message.author.id)], message.content]})
             emailList.pop(str(message.author.id))
+            return
         elif str(message.author.id) in pswList.keys():
             embed = setup.login(str(message.author.id), pswList[str(message.author.id)][0], pswList[str(message.author.id)][1], message.content)
             await message.channel.send(embed=embed)
             pswList.pop(str(message.author.id))
+            return
 
     f = files.read("../Bot-Storage/" + str(message.guild.id) + ".json", True)
 
@@ -58,7 +60,7 @@ async def on_message(message):
             await message.channel.send(embed=embed)
 
         elif message.content.startswith("!setup"):
-            return await message.channel.send(embed=await setup.setup(message, str(message.guild.id)))
+            await message.channel.send(embed=await setup.setup(message, str(message.guild.id)))
             emailList.update({str(message.author.id) : str(message.guild.id)})
 
     elif message.content.split(" ")[0] in ownerOnly and message.content.split(" ")[0] in serverSelectedOnly:
@@ -75,20 +77,43 @@ async def on_message(message):
                     msg = await plugins.view(client, message, int(args[1]))
                 else:
                     msg = await plugins.view(client, message)
+            elif args[0] == "install":
+                if len(args) >= 2:
+                    if int(args[1]) < 0:
+                        return await message.channel.send(embed=error.gen("The plugin ID must be greater than or equal to 0!"))
+                    return await message.channel.send(embed=await plugins.install(message, str(message.guild.id), int(args[1])))
+                else:
+                    return await message.channel.send(embed=error.gen("Please specify an ID \n\n!plugins install (id)"))
+            elif args[0] == "remove":
+                if len(args) >= 2:
+                    if int(args[1]) < 0:
+                        return await message.channel.send(embed=error.gen("The plugin ID must be greater than or equal to 0!"))
+                    return await message.channel.send(embed=await plugins.remove(message, str(message.guild.id), int(args[1])))
+                else:
+                    return await message.channel.send(embed=error.gen("Please specify an ID \n\n!plugins remove (id)"))
+            elif args[0] == "purchase":
+                if len(args) >= 2:
+                    if int(args[1]) < 0:
+                        return await message.channel.send(embed=error.gen("The plugin ID must be greater than or equal to 0!"))
+                    return await message.channel.send(embed=await plugins.purchase(message, str(message.guild.id), int(args[1])))
+                else:
+                    return await message.channel.send(embed=error.gen("Please specify an ID \n\n!plugins purchase (id)"))
+
 
     elif message.content.split(" ")[0] in ownerOnly:
+
+        if message.content.startswith("!server"):
+            if len(args) >= 1:
+                return await message.channel.send(embed=error.gen("Please specify an index. \n\n!server (index - 0 or 1)"))
+
+            return await message.channel.send(embed=setup.selectServer(str(message.guild.id), int(args[0])))
+
         if f != "FileNotFoundError":
             if f["server"] == 2:
                 return await message.channel.send(embed=setup.serverNotSelected(str(message.guild.id)))
 
         if message.content.startswith("!reset"):
             await message.channel.send(embed=setup.reset(str(message.guild.id), str(message.author.id)))
-
-        elif message.content.startswith("!server"):
-            if args[0] == None:
-                return await message.channel.send(embed=error.gen("Please specify an index. \n\n!server (index - 0 or 1)"))
-
-            await message.channel.send(embed=setup.selectServer(str(message.guild.id), int(args[0])))
 
     #elif message.content.split(" ")[0] in serverSelectedOnly:
 
