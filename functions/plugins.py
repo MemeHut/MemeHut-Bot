@@ -6,14 +6,14 @@ import math
 import error
 import files
 
-async def view(message, page=1):
+async def view(message, page=1, query=""):
     f = files.read("../Bot-Storage/" + str(message.guild.id) + ".json", True)
 
     if f == "FileNotFoundError":
         return error.gen("You have not setup your server yet!")
     elif f == "JSONDecodeError":
         return error.gen("Your server's file seems to be corrupted, please contact us or reset your server. \n\n!contact \n!reset")
-
+    
     if f["plugin-msg"] != "":
         msg = await message.channel.fetch_message(f["plugin-msg"])
         await msg.delete()
@@ -21,18 +21,41 @@ async def view(message, page=1):
     r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/plugins", headers={"Authorization" : f["auth"]}).text)
 
     embed = discord.Embed(colour=discord.Colour(0x86aeec))
-    embed.set_author(name="Plugins - Page " + str(page) + "/" + str(math.ceil(len(r["plugins"]) / 10)))
 
-    for i in range(10 * page):
-        if i <= 10 * page and i >= (10 * page) - 10 and i <= len(r["plugins"]) - 1:
+    numOfPlugins = 0
+    for i in range(len(r["plugins"])):
+        name = r["plugins"][i]["name"]
+        credits = r["plugins"][i]["credits"]
+        if query == "":
+            if i <= 10 * page and i >= (10 * page) - 10 and i <= len(r["plugins"]) - 1:
+                if r["plugins"][i]["state"] == "ACTIVE":
+                    embed.add_field(name="<:installed:559156765833429032> " + name, value="Credits: " + str(credits) + "\nID: " + str(i), inline=False)
+                elif r["plugins"][i]["state"] == "PURCHASED":
+                    embed.add_field(name="<:uninstalled:559156765569056789>  " + name, value="Credits: " + str(credits) + "\nID: " + str(i), inline=False)
+                elif r["plugins"][i]["state"] == "LOCKED":
+                    embed.add_field(name="<:locked:559156765816651786> " + name, value="Credits: " + str(credits) + "\nID: " + str(i), inline=False)
+        else:
+            if query.lower() in name.lower():
+                if numOfPlugins <= 9 * page and numOfPlugins >= (9 * page) - 9 and i <= len(r["plugins"]) - 1:
+                    if r["plugins"][i]["state"] == "ACTIVE":
+                        embed.add_field(name="<:installed:559156765833429032> " + name, value="Credits: " + str(credits) + "\nID: " + str(i), inline=False)
+                    elif r["plugins"][i]["state"] == "PURCHASED":
+                        embed.add_field(name="<:uninstalled:559156765569056789>  " + name, value="Credits: " + str(credits) + "\nID: " + str(i), inline=False)
+                    elif r["plugins"][i]["state"] == "LOCKED":
+                        embed.add_field(name="<:locked:559156765816651786> " + name, value="Credits: " + str(credits) + "\nID: " + str(i), inline=False)
+                numOfPlugins = numOfPlugins + 1
+
+    if query != "":
+        numOfPages = 0
+        for i in range(len(r["plugins"])):
             name = r["plugins"][i]["name"]
-            credits = r["plugins"][i]["credits"]
-            if r["plugins"][i]["state"] == "ACTIVE":
-                embed.add_field(name="<:installed:559156765833429032> " + name, value="Credits: " + str(credits) + "\nID: " + str(i), inline=False)
-            elif r["plugins"][i]["state"] == "PURCHASED":
-                embed.add_field(name="<:uninstalled:559156765569056789>  " + name, value="Credits: " + str(credits) + "\nID: " + str(i), inline=False)
-            elif r["plugins"][i]["state"] == "LOCKED":
-                embed.add_field(name="<:locked:559156765816651786> " + name, value="Credits: " + str(credits) + "\nID: " + str(i), inline=False)
+            if query.lower() in name.lower():
+                numOfPages = numOfPages + 1
+
+        numOfPages = math.ceil(numOfPages / 10)
+        embed.set_author(name="Plugins - Page " + str(page) + "/" + str(numOfPages))
+    else:
+        embed.set_author(name="Plugins - Page " + str(page) + "/" + str(math.ceil(len(r["plugins"]) / 10)))
 
     msg = await message.channel.send(embed=embed)
 
@@ -47,8 +70,6 @@ async def view(message, page=1):
     f["plugin-msg"] = str(msg.id)
 
     files.write("../Bot-Storage/" + str(message.guild.id) + ".json", json.dumps(f, indent=4, sort_keys=True))
-
-    return msg
 
 def install(guild, id):
     f = files.read("../Bot-Storage/" + guild + ".json", True)

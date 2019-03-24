@@ -21,8 +21,8 @@ emailList = {}
 pswList = {}
 accEmails = {}
 
-serverSelectedOnly = ["!plugins"]
-ownerOnly = ["!plugins", "!reset", "!server"]
+serverSelectedOnly = ["!plugins", "!motd", "!install", "!remove", "!purchase"]
+ownerOnly = ["!reset", "!server", "!install", "!remove", "!purchase"]
 
 client = discord.Client()
 
@@ -72,33 +72,27 @@ async def on_message(message):
             if f["server"] == 2:
                 return await message.channel.send(embed=setup.serverNotSelected(str(message.guild.id)))
 
-        if message.content.startswith("!plugins"):
-            if args[0] == "view":
-                if len(args) >= 2 and int(args[1]) > 0:
-                    msg = await plugins.view(client, message, int(args[1]))
-                else:
-                    msg = await plugins.view(client, message)
-            elif args[0] == "install":
-                if len(args) >= 2:
-                    if int(args[1]) < 0:
-                        return await message.channel.send(embed=error.gen("The plugin ID must be greater than or equal to 0!"))
-                    return await message.channel.send(embed=await plugins.install(message, str(message.guild.id), int(args[1])))
-                else:
-                    return await message.channel.send(embed=error.gen("Please specify an ID \n\n!plugins install (id)"))
-            elif args[0] == "remove":
-                if len(args) >= 2:
-                    if int(args[1]) < 0:
-                        return await message.channel.send(embed=error.gen("The plugin ID must be greater than or equal to 0!"))
-                    return await message.channel.send(embed=await plugins.remove(message, str(message.guild.id), int(args[1])))
-                else:
-                    return await message.channel.send(embed=error.gen("Please specify an ID \n\n!plugins remove (id)"))
-            elif args[0] == "purchase":
-                if len(args) >= 2:
-                    if int(args[1]) < 0:
-                        return await message.channel.send(embed=error.gen("The plugin ID must be greater than or equal to 0!"))
-                    return await message.channel.send(embed=await plugins.purchase(message, str(message.guild.id), int(args[1])))
-                else:
-                    return await message.channel.send(embed=error.gen("Please specify an ID \n\n!plugins purchase (id)"))
+        if message.content.startswith("!install"):
+            if len(args) >= 2:
+                if int(args[1]) < 0:
+                    return await message.channel.send(embed=error.gen("The plugin ID must be greater than or equal to 0!"))
+                return await message.channel.send(embed=await plugins.install(message, str(message.guild.id), int(args[0])))
+            else:
+                return await message.channel.send(embed=error.gen("Please specify an ID \n\n!install (id)"))
+        elif message.content.startswith("!remove"):
+            if len(args) >= 2:
+                if int(args[1]) < 0:
+                    return await message.channel.send(embed=error.gen("The plugin ID must be greater than or equal to 0!"))
+                return await message.channel.send(embed=await plugins.remove(message, str(message.guild.id), int(args[0])))
+            else:
+                return await message.channel.send(embed=error.gen("Please specify an ID \n\n!remove (id)"))
+        elif message.content.startswith("!purchase"):
+            if len(args) >= 2:
+                if int(args[1]) < 0:
+                    return await message.channel.send(embed=error.gen("The plugin ID must be greater than or equal to 0!"))
+                return await message.channel.send(embed=await plugins.purchase(message, str(message.guild.id), int(args[1])))
+            else:
+                return await message.channel.send(embed=error.gen("Please specify an ID \n\n!purchase (id)"))
 
 
     elif message.content.split(" ")[0] in ownerOnly:
@@ -120,8 +114,30 @@ async def on_message(message):
             if f["server"] == 2:
                 return await message.channel.send(embed=setup.serverNotSelected(str(message.guild.id)))
         if message.content.startswith("!motd"):
-            if args == None:
-                await message.channel.send(file=motd.view(str(message.guild.id))
+            if args[0] == "view":
+                if len(args) > 1:
+                    args.pop(0)
+                    await message.channel.send(file=motd.view(str(message.guild.id), False, args))
+                else:
+                    await message.channel.send(file=motd.view(str(message.guild.id)))
+        elif message.content.startswith("!plugins"):
+            if len(args) >= 2:
+                if args[0] == "search":
+                    if int(args[1]):
+                        page = args[1]
+                        args.pop(0)
+                        args.pop(0)
+                        query = ""
+                        for i in args:
+                            query = i + " "
+                        return await plugins.view(message, int(page), query)
+                    else:
+                        return await plugins.view(message, 1, query)
+            else:
+                if len(args) == 1 and int(args[0]) > 0:
+                    return await plugins.view(message, int(args[0]))
+                else:
+                    return await plugins.view(message)
 
 
 @client.event
