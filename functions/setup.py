@@ -24,9 +24,7 @@ def login(user, guild, email, psw):
 
     return embed
 
-async def setup(message, guild):
-    f = files.read("../Bot-Storage/" + guild + ".json")
-
+async def setup(message, f):
     if f != "FileNotFoundError":
         return error.gen("This server has already been setup! In order to reset it, run the following command. \n\n!reset")
 
@@ -40,41 +38,23 @@ async def setup(message, guild):
 
     return embed
 
-def reset(guild, user):
-    f = files.read("../Bot-Storage/" + guild + ".json", True)
+def reset(f):
+    os.remove("../Bot-Storage/" + guild + ".json")
 
-    if f == "FileNotFoundError":
-        return error.gen("You have not setup your server yet!")
-    elif f == "JSONDecodeError":
-        return error.gen("Your server's file seems to be corrupted, please contact us. \n\n!contact")
+    embed = discord.Embed(colour=discord.Colour(0x86aeec))
+    embed.add_field(name="Server Reset!", value="Your server has been reset.")
 
-    if user == f["owner"]:
-        os.remove("../Bot-Storage/" + guild + ".json")
+    return embed
 
-        embed = discord.Embed(colour=discord.Colour(0x86aeec))
-        embed.add_field(name="Server Reset!", value="Your server has been reset.")
-
-        return embed
-    else:
-        return error.gen("You aren't the owner!")
-
-def serverNotSelected(guild):
-    f = files.read("../Bot-Storage/" + guild + ".json", True)
-
-    r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][0] + "/server_data", headers={"Authorization" : f["auth"]}).text)
-    rr = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][1] + "/server_data", headers={"Authorization" : f["auth"]}).text)
-
-    names = [r["server"]["name"], rr["server"]["name"]]
+def serverNotSelected(f):
+    names = [json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][0] + "/server_data", headers={"Authorization" : f["auth"]}).text)["server"]["name"], json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][1] + "/server_data", headers={"Authorization" : f["auth"]}).text)["server"]["name"]]
 
     embed = discord.Embed(colour=discord.Colour(0x86aeec))
     embed.add_field(name="One last step!", value="You have more than one server on your Minehut account, you need to select one. \n\nYou have the following servers: \n0. " + names[0] + "\n1. " + names[1] + "\n\n Please run the following command. \n\n!server (index - 0 or 1)")
 
     return embed
 
-
-def selectServer(guild, index):
-    f = files.read("../Bot-Storage/" + guild + ".json", True)
-
+def selectServer(f, index):
     f["server"] = index
 
     files.write("../Bot-Storage/" + guild + ".json", json.dumps(f, indent=4, sort_keys=True))

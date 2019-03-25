@@ -9,13 +9,7 @@ import files
 
 keys = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]
 
-def view(guild, server=True, args=""):
-    f = files.read("../Bot-Storage/" + guild + ".json", True)
-    if f == "FileNotFoundError":
-        return error.gen("You have not setup your server yet!")
-    elif f == "JSONDecodeError":
-        return error.gen("Your server's file seems to be corrupted, please contact us or reset your server. \n\n!contact \n!reset")
-
+def view(f, server=True, args=""):
     r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/server_data", headers={"Authorization" : f["auth"]}).text)
     name = r["server"]["name"]
 
