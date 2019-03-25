@@ -29,3 +29,12 @@ def stop(f):
     embed.add_field(name="Stopping server.", value="Your server is stopping.", inline=False)
 
     return embed
+
+def status(f):
+    embed = discord.Embed(colour=discord.Colour(0x86aeec))
+
+    r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/status", headers={"Authorization" : f["auth"]}).text)
+
+    embed.add_field(name="Server Status", value="Status: " + r["status"]["status"] + "\nPlayers: " + str(r["status"]["player_count"]) + "/" + str(r["status"]["max_players"]), inline=False)
+
+    return embed

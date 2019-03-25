@@ -10,6 +10,7 @@ import plugins
 import motd
 import setup
 import controls
+import accounts
 
 import error
 import files
@@ -25,8 +26,8 @@ emailList = {}
 pswList = {}
 accEmails = {}
 
-serverSelectedOnly = ["!plugins", "!motd", "!install", "!remove", "!purchase"]
-ownerOnly = ["!reset", "!server", "!install", "!remove", "!purchase", "!stop", "!start"]
+serverSelectedOnly = ["!status", "!plugins", "!motd", "!install", "!remove", "!purchase"]
+ownerOnly = ["!account", "!reset", "!server", "!install", "!remove", "!purchase", "!stop", "!start"]
 
 client = discord.Client()
 
@@ -42,14 +43,15 @@ async def on_message(message):
 
     uid = message.author.id
     if str(channel).startswith("Direct Message with"):
-        f = files.read("../Bot-Storage/dm-" + str(message.author.id) + ".json", True)
-        id = str(message.author.id)
+        id = "dm-" + str(message.author.id)
     else:
-        f = files.read("../Bot-Storage/" + str(message.guild.id) + ".json", True)
         id = str(message.guild.id)
 
-    if f == "JSONDecodeError":
-        return await channel.send(embed=error.gen("Your server's file seems to be corrupted, please contact us or reset your server. \n\n!contact \n!reset"))
+    f = files.read("../Bot-Storage/" + id + ".json", True)
+
+    if cmd in ownerOnly or cmd in serverSelectedOnly:
+        if f == "JSONDecodeError":
+            return await channel.send(embed=error.gen("Your server's file seems to be corrupted, please contact us or reset your server. \n\n!contact \n!reset"))
 
     if str(channel).startswith("Direct Message with"):
         if str(uid) in emailList.keys():
@@ -60,7 +62,10 @@ async def on_message(message):
             return pswList.pop(str(uid))
 
     if cmd == "!setup":
-        await channel.send(embed=await setup.setup(message, f))
+        embed = await setup.setup(message, f)
+        if id.startswith("dm-"):
+            return
+        await channel.send(embed=embed)
         return emailList.update({str(uid) : id})
     elif cmd == "!help":
             embed = discord.Embed(colour=discord.Colour(0xab99e8))
@@ -71,6 +76,11 @@ async def on_message(message):
             return await channel.send(embed=error.gen("You do not have permission to do this!"))
         await channel.send("Restarting...")
         return os.system("cd /opt/MemeHut/MemeHut-Bot/ && killall python3.6 && python3.6 index.py")
+    elif cmd == "!update":
+        if uid not in devs:
+            return await channel.send(embed=error.gen("You do not have permission to do this!"))
+        await channel.send("Updating...")
+        return os.system("cd /opt/MemeHut/MemeHut-Bot/ && git pull")
 
     if f == "FileNotFoundError":
         return await channel.send(embed=error.gen("You have not setup your server yet!"))
@@ -119,14 +129,18 @@ async def on_message(message):
                 return await channel.send(embed=error.gen("Please specify an index. \n\n!server (index - 0 or 1)"))
             if not checks.isInt(args[0]):
                 return await channel.send(embed=error.gen("The value " + args[0] + " is not an integer."))
-            return await channel.send(embed=setup.selectServer(f, int(args[0])))
+            return await channel.send(embed=setup.selectServer(f, id, int(args[0])))
+        elif cmd == "!account":
+            await channel.send(embed=accounts.account(f))
         elif cmd == "!reset":
-            await channel.send(embed=setup.reset(str(message.guild.id), str(message.author.id)))
+            await channel.send(embed=setup.reset(id))
         elif cmd == "!stop":
             return await channel.send(embed=controls.stop(f))
         elif cmd == "!start":
             return await channel.send(embed=controls.start(f))
     elif cmd in serverSelectedOnly:
+        if f["server"] == 2:
+            return await channel.send(embed=setup.serverNotSelected(f))
         if cmd == "!motd":
             if args[0] == "view":
                 if len(args) > 1:
@@ -134,6 +148,8 @@ async def on_message(message):
                     return await channel.send(file=motd.view(f, False, args))
                 else:
                     return await channel.send(file=motd.view(f))
+        elif cmd == "!status":
+            return await channel.send(embed=controls.status(f))
         elif cmd == "!plugins":
             if len(args) >= 2:
                 if args[0] == "search":

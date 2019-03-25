@@ -49,6 +49,10 @@ def view(f, page=1, query=""):
     return embed
 
 def install(f, id):
+    r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/status", headers={"Authorization" : f["auth"]}).text)
+    if r["status"]["online"] == False:
+        return error.gen("Your server is offline! Start it in order to manage plugins.")
+
     r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/plugins", headers={"Authorization" : f["auth"]}).text)
 
     if id > len(r["plugins"]) - 1:
@@ -70,6 +74,9 @@ def install(f, id):
     return embed
 
 def remove(f, id):
+    r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/status", headers={"Authorization" : f["auth"]}).text)
+    if r["status"]["online"] == False:
+        return error.gen("Your server is offline! Start it in order to manage plugins.")
     r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/plugins", headers={"Authorization" : f["auth"]}).text)
 
     if id > len(r["plugins"]) - 1:
@@ -89,6 +96,9 @@ def remove(f, id):
     return embed
 
 def purchase(f, id):
+    r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/status", headers={"Authorization" : f["auth"]}).text)
+    if r["status"]["online"] == False:
+        return error.gen("Your server is offline! Start it in order to manage plugins.")
     r = json.loads(requests.get("https://api.minehut.com/server/" + f["servers"][f["server"]] + "/plugins", headers={"Authorization" : f["auth"], "Content-Type" : "application/json"}).text)
 
     if id > len(r["plugins"]) - 1:

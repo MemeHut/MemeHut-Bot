@@ -6,7 +6,7 @@ import os
 import error
 import files
 
-def login(user, guild, email, psw):
+def login(user, id, email, psw):
     r = json.loads(requests.post("https://api.minehut.com/users/login", headers={"Content-Type":"application/json"}, data=json.dumps({"email":email,"password":psw})).text)
 
     data = files.read("../Bot-Storage/template.json", True)
@@ -17,10 +17,9 @@ def login(user, guild, email, psw):
     data["servers"][1] = r["servers"][1]
     data["owner"] = user
 
-    files.write("../Bot-Storage/" + guild + ".json", json.dumps(data, indent=4, sort_keys=True))
+    files.write("../Bot-Storage/" + id + ".json", json.dumps(data, indent=4, sort_keys=True))
 
-    embed = discord.Embed(colour=discord.Colour(0x86aeec))
-    embed.add_field(name="Server Setup!", value="Your server has been setup! For a list of commands run the following command. \n\n!help")
+    embed = serverNotSelected(files.read("../Bot-Storage/" + id + ".json", True))
 
     return embed
 
@@ -38,8 +37,8 @@ async def setup(message, f):
 
     return embed
 
-def reset(f):
-    os.remove("../Bot-Storage/" + guild + ".json")
+def reset(id):
+    os.remove("../Bot-Storage/" + id + ".json")
 
     embed = discord.Embed(colour=discord.Colour(0x86aeec))
     embed.add_field(name="Server Reset!", value="Your server has been reset.")
@@ -54,10 +53,10 @@ def serverNotSelected(f):
 
     return embed
 
-def selectServer(f, index):
+def selectServer(f, id, index):
     f["server"] = index
 
-    files.write("../Bot-Storage/" + guild + ".json", json.dumps(f, indent=4, sort_keys=True))
+    files.write("../Bot-Storage/" + id + ".json", json.dumps(f, indent=4, sort_keys=True))
 
     embed = discord.Embed(colour=discord.Colour(0x86aeec))
     embed.add_field(name="Setup complete!", value="Your server is now completely setup! Run the following command for a list of commands. \n\n!help")

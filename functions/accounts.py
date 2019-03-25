@@ -5,14 +5,7 @@ import requests
 import error
 import files
 
-def account(guild):
-    f = files.read("../Bot-Storage/" + guild + ".json", True)
-
-    if f == "FileNotFoundError":
-        return error.gen("You have not setup your server yet!")
-    elif f == "JSONDecodeError":
-        return error.gen("Your server's file seems to be corrupted, please contact us or reset your server. \n\n!contact \n!reset")
-
+def account(f):
     r = json.loads(requests.get("https://api.minehut.com/user/" + f["id"], headers={"Authorization" : f["auth"]}).text)
 
     embed = discord.Embed(colour=discord.Colour(0x86aeec))
