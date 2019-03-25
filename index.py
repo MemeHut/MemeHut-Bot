@@ -115,7 +115,7 @@ async def on_message(message):
         if uid != f["owner"]:
             return await channel.send(embed=error.gen("You aren't the owner!"))
         if cmd == "!server":
-            if args != []:
+            if args == []:
                 return await channel.send(embed=error.gen("Please specify an index. \n\n!server (index - 0 or 1)"))
             if not checks.isInt(args[0]):
                 return await channel.send(embed=error.gen("The value " + args[0] + " is not an integer."))
