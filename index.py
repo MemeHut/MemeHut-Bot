@@ -11,6 +11,7 @@ import motd
 import setup
 import controls
 import accounts
+import MHfiles
 
 import error
 import files
@@ -20,14 +21,14 @@ config = files.read("../config.json", True)
 
 TOKEN = config["bot_token"]
 
-devs = [332312990441406465]
+devs = [332312990441406465, 75637144051257344]
 
 emailList = {}
 pswList = {}
 accEmails = {}
 
-serverSelectedOnly = ["!status", "!plugins", "!motd", "!install", "!remove", "!purchase"]
-ownerOnly = ["!account", "!reset", "!server", "!install", "!remove", "!purchase", "!stop", "!start"]
+serverSelectedOnly = ["!files", "!status", "!plugins", "!motd", "!install", "!remove", "!purchase"]
+ownerOnly = ["!files", "!account", "!reset", "!server", "!install", "!remove", "!purchase", "!stop", "!start"]
 
 client = discord.Client()
 
@@ -121,6 +122,12 @@ async def on_message(message):
                     return await channel.send(embed=error.gen("The value " + args[0] + " is not an integer."))
             else:
                 return await channel.send(embed=error.gen("Please specify an ID \n\n!purchase (id)"))
+        elif cmd == "!files":
+            if args[0] == "view":
+                if len(args) > 1:
+                    print("joi")
+                else:
+                    await channel.send(embed=MHfiles.view(f))
     elif cmd in ownerOnly:
         if uid != f["owner"]:
             return await channel.send(embed=error.gen("You aren't the owner!"))
