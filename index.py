@@ -3,6 +3,7 @@ import os
 import discord
 import json
 import sys
+import re
 
 sys.path.insert(0, './functions/')
 
@@ -125,7 +126,7 @@ async def on_message(message):
         elif cmd == "!files":
             if args[0] == "view":
                 if len(args) > 1:
-                    print("joi")
+                    await channel.send(embed=MHfiles.view(f, args[1]))
                 else:
                     await channel.send(embed=MHfiles.view(f))
     elif cmd in ownerOnly:
