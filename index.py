@@ -77,7 +77,7 @@ async def on_message(message):
         if uid not in devs:
             return await channel.send(embed=error.gen("You do not have permission to do this!"))
         await channel.send("Restarting...")
-        return os.system("cd /opt/MemeHut/MemeHut-Bot/ && killall python3.6 && python3.6 index.py")
+        return os.system("cd /opt/MemeHut/MemeHut-Bot/ && pkill python3.6 && python3.6 index.py")
     elif cmd == "!update":
         if uid not in devs:
             return await channel.send(embed=error.gen("You do not have permission to do this!"))
@@ -126,9 +126,14 @@ async def on_message(message):
         elif cmd == "!files":
             if args[0] == "view":
                 if len(args) > 1:
-                    await channel.send(embed=MHfiles.view(f, args[1]))
+                    await channel.send(embed=MHfiles.view(f, args[0]))
                 else:
-                    await channel.send(embed=MHfiles.view(f))
+                    await channel.send(embed=error.gen("Please specify a file! \n\n!files view (path)")
+            else:
+                if len(args) > 1:
+                    await channel.send(embed=MHfiles.files(f, args[0]))
+                else:
+                    await channel.send(embed=MHfiles.files(f))
     elif cmd in ownerOnly:
         if uid != f["owner"]:
             return await channel.send(embed=error.gen("You aren't the owner!"))
