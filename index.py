@@ -126,9 +126,9 @@ async def on_message(message):
         elif cmd == "!files":
             if args[0] == "view":
                 if len(args) > 1:
-                    await channel.send(embed=MHfiles.view(f, args[0]))
+                    await channel.send(embed=MHfiles.view(f, args[1]))
                 else:
-                    await channel.send(embed=error.gen("Please specify a file! \n\n!files view (path)")
+                    await channel.send(embed=error.gen("Please specify a file! \n\n!files view (path)"))
             else:
                 if len(args) > 1:
                     await channel.send(embed=MHfiles.files(f, args[0]))
